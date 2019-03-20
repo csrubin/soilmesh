@@ -1,5 +1,4 @@
 #include <TinyGPS++.h>
-#include <SoftwareSerial.h>
 #include <HardwareSerial.h>
 
 /*
@@ -7,21 +6,18 @@
    It requires the use of SoftwareSerial, and assumes that you have a
    4800-baud serial GPS device hooked up on pins 4(rx) and 3(tx).
 */
-static const int RXPin = 26, TXPin = 25;
 static const uint32_t GPSBaud = 9600;
 
 // The TinyGPS++ object
 TinyGPSPlus gps;
 
 // The serial connection to the GPS device
-SoftwareSerial ss(RXPin, TXPin);
-HardwareSerial hs(1);
+HardwareSerial hs(0);
 
 
 void setup()
 {
   Serial.begin(115200);
-  ss.begin(GPSBaud);
   hs.begin(GPSBaud, SERIAL_8N1, 16, 17);
 
   Serial.println(F("DeviceExample.ino"));
@@ -93,5 +89,41 @@ void displayInfo()
     Serial.print(F("INVALID"));
   }
 
+  
+  Serial.print(F("  Speed: "));
+  if (gps.speed.isValid()){
+    Serial.print(gps.speed.mph());
+    Serial.print(F(" mph"));
+  }
+  else{
+    Serial.print(F("INVALID"));
+  }
+
+  Serial.print(F("  Altitude: "));
+  if (gps.altitude.isValid()){
+    Serial.print(gps.altitude.meters());
+    Serial.print(F("m"));
+  }
+  else{
+    Serial.print(F("INVALID"));
+  }
+
+  Serial.print(F("  # Sats: "));
+  if (gps.satellites.isValid()){
+    Serial.print(gps.satellites.value());
+  }
+  else{
+    Serial.print(F("INVALID"));
+  }
+
+  Serial.print(F("  HDOP: "));
+  if (gps.hdop.isValid()){
+    Serial.print(gps.hdop.value());
+  }
+  else{
+    Serial.print(F("INVALID"));
+  }
+
   Serial.println();
+  delay(1000);
 }

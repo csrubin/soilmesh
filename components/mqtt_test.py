@@ -16,7 +16,7 @@ def on_message(client, userdata, message):
 
 
 topic = 'capstone_test'
-host = 'broker.mqttdashboard.com'
+host = 'broker.hivemq.com'
 port = 1883
 
 print('Creating client')
@@ -29,12 +29,14 @@ client.connect(host, port)
 
 client.loop_start()
 
-print('Subscribing to topic')
-client.subscribe(topic)
-
-print('Publishing message')
-client.publish(topic, 'TESTING...1, 2, 3...')
-
-time.sleep(4)
+while True:
+    
+    print('Subscribing to topic')
+    client.subscribe(topic)
+    
+    print('Publishing message')
+    client.publish(topic, 'TESTING...1, 2, 3...')
+    
+    time.sleep(4)
 
 client.loop_stop()
