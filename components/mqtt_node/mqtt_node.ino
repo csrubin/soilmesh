@@ -24,6 +24,8 @@ String nodeID = String(EEPROM.read(0));
 char topic[] = "capstone_test";
 String full, lati, longi, mon, d, yr, hr, m, s, alt, sats;
 
+
+
 // Object initialization
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -81,15 +83,54 @@ void loop() {
         alt = String(gps.altitude.value());
         sats = String(gps.satellites.value());
 
-        //full = nodeID + ", " + yr + ", " + mon + ", " + d + ", " + hr + ", " 
-        //+ m + ", " + s + ", " + lati + ", " + longi + ", " + alt + ", " + sats; 
+        /*full = nodeID + ", " + yr + ", " + mon + ", " + d + ", " + hr + ", " 
+        + m + ", " + s + ", " + lati + ", " + longi + ", " + alt + ", " + sats; 
 
         full = lati + ', ' + longi;
         char dat[sizeof(full)];
         full.toCharArray(dat,sizeof(full));
+        client.publish(topic, dat);*/
+
+        char LATI[sizeof(lati)];
+        lati.toCharArray(LATI,sizeof(lati));
+
+        char LONGI[sizeof(longi)];
+        longi.toCharArray(LONGI,sizeof(longi));
+
+        char YR[sizeof(yr)];
+        yr.toCharArray(YR,sizeof(yr));
+
+        char MON[sizeof(mon)];
+        mon.toCharArray(MON,sizeof(mon));
+
+        char D[sizeof(d)];
+        d.toCharArray(D,sizeof(d));
+
+        char HR[sizeof(hr)];
+        hr.toCharArray(HR,sizeof(hr));
+
+        char M[sizeof(m)];
+        m.toCharArray(M,sizeof(m));
+
+        char S[sizeof(s)];
+        s.toCharArray(S,sizeof(s));
         
-        
-        client.publish(topic, dat);
+        char ALT[sizeof(alt)];
+        alt.toCharArray(ALT,sizeof(alt));
+
+        char SATS[sizeof(sats)];
+        sats.toCharArray(SATS,sizeof(sats));
+
+        client.publish("soilmesh/node1/latitude", LATI);
+        client.publish("soilmesh/node1/longitude", LONGI);
+        client.publish("soilmesh/node1/year", YR);
+        client.publish("soilmesh/node1/month", MON);
+        client.publish("soilmesh/node1/day", D);
+        client.publish("soilmesh/node1/hour", HR);
+        client.publish("soilmesh/node1/minute", M);
+        client.publish("soilmesh/node1/second", S);
+        client.publish("soilmesh/node1/altitude", ALT);
+        client.publish("soilmesh/node1/satellites", SATS);
     }
   }
   
