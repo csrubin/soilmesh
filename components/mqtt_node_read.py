@@ -1,19 +1,19 @@
-ca#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Mar 18 11:07:11 2019
+Created on Thu Mar 21 06:03:32 2019
 
 @author: csrubin
 """
+
+print('Importing modules...')
 import paho.mqtt.client as mqtt
 import time
 
 def on_message(client, userdata, message):
     print('Message received: ', str(message.payload.decode('utf-8')))
     print('Message topic: ', message.topic)
-    print('Message qos: ', message.qos)
-    print('Message retain flag: ', message.retain)
-
+    print('')
 
 topic = 'capstone_test'
 host = 'broker.hivemq.com'
@@ -29,14 +29,12 @@ client.connect(host, port)
 
 client.loop_start()
 
-while True:
-    
-    print('Subscribing to topic')
-    client.subscribe(topic)
-    
-    print('Publishing message')
-    client.publish(topic, 'TESTING...1, 2, 3...')
-    
-    time.sleep(4)
+print('Subscribing to topic')
+client.subscribe(topic)
 
-client.loop_stop()
+#print('Publishing message')
+#client.publish(topic, 'TESTING...1, 2, 3...')
+
+while True: 
+    client.subscribe(topic)
+    time.sleep(4)

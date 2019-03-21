@@ -17,7 +17,7 @@ HardwareSerial hs(0);
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   hs.begin(GPSBaud, SERIAL_8N1, 16, 17);
 
   Serial.println(F("DeviceExample.ino"));
@@ -30,66 +30,66 @@ void setup()
 void loop()
 {
   // This sketch displays information every time a new sentence is correctly encoded.
-  while (hs.available() > 0)
-    if (gps.encode(hs.read()))
+  if (hs.available() > 0){
+    if (gps.encode(hs.read())){
       displayInfo();
+    }
+  }
 
-  if (millis() > 5000 && gps.charsProcessed() < 10)
-  {
+  if (millis() > 5000 && gps.charsProcessed() < 10){
     Serial.println(F("No GPS detected: check wiring."));
     while(true);
   }
 }
 
-void displayInfo()
-{
+void displayInfo(){
+  // Location
   Serial.print(F("Location: ")); 
-  if (gps.location.isValid())
-  {
+  if (gps.location.isValid()){
     Serial.print(gps.location.lat(), 6);
     Serial.print(F(","));
     Serial.print(gps.location.lng(), 6);
-  }
-  else
-  {
+  } 
+  else{
     Serial.print(F("INVALID"));
   }
 
+  // Date/Time
   Serial.print(F("  Date/Time: "));
-  if (gps.date.isValid())
-  {
+  if (gps.date.isValid()){
     Serial.print(gps.date.month());
     Serial.print(F("/"));
     Serial.print(gps.date.day());
     Serial.print(F("/"));
     Serial.print(gps.date.year());
   }
-  else
-  {
+  else{
     Serial.print(F("INVALID"));
   }
 
   Serial.print(F(" "));
-  if (gps.time.isValid())
-  {
-    if (gps.time.hour() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.hour());
-    Serial.print(F(":"));
-    if (gps.time.minute() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.minute());
-    Serial.print(F(":"));
-    if (gps.time.second() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.second());
-    Serial.print(F("."));
-    if (gps.time.centisecond() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.centisecond());
+  if (gps.time.isValid()){
+    if (gps.time.hour() < 10) Serial.print(F("0"));{
+      Serial.print(gps.time.hour());
+      Serial.print(F(":"));
+    }
+    if (gps.time.minute() < 10) Serial.print(F("0"));{
+      Serial.print(gps.time.minute());
+      Serial.print(F(":"));
+    }
+    if (gps.time.second() < 10) Serial.print(F("0"));{
+      Serial.print(gps.time.second());
+      Serial.print(F("."));
+    }
+    if (gps.time.centisecond() < 10) Serial.print(F("0"));{
+      Serial.print(gps.time.centisecond());
+    }
   }
-  else
-  {
+  else{
     Serial.print(F("INVALID"));
   }
 
-  
+  // Speed
   Serial.print(F("  Speed: "));
   if (gps.speed.isValid()){
     Serial.print(gps.speed.mph());
@@ -99,6 +99,7 @@ void displayInfo()
     Serial.print(F("INVALID"));
   }
 
+  // Altitude
   Serial.print(F("  Altitude: "));
   if (gps.altitude.isValid()){
     Serial.print(gps.altitude.meters());
@@ -108,6 +109,7 @@ void displayInfo()
     Serial.print(F("INVALID"));
   }
 
+  // Number of Satellites
   Serial.print(F("  # Sats: "));
   if (gps.satellites.isValid()){
     Serial.print(gps.satellites.value());
@@ -116,6 +118,7 @@ void displayInfo()
     Serial.print(F("INVALID"));
   }
 
+  // Horizon Dilution of Position
   Serial.print(F("  HDOP: "));
   if (gps.hdop.isValid()){
     Serial.print(gps.hdop.value());
@@ -124,6 +127,7 @@ void displayInfo()
     Serial.print(F("INVALID"));
   }
 
+  // Newline + timing delay --> change for nonblocking? 
   Serial.println();
   delay(1000);
 }
