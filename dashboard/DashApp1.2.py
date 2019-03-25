@@ -20,9 +20,9 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 #app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-df = pd.read_csv('Book1.csv')
+df = pd.read_csv('WORK.csv')
 
-#with open('Book1.csv') as f:
+#with open('WORK.csv') as f:
 #    last3 = list(f)[-3:]
 
 #print(last3)
@@ -34,7 +34,7 @@ df = pd.read_csv('Book1.csv')
 
 
 data = [] #Buffer list
-with open("Book1.csv", "r") as input_file:
+with open("WORK.csv", "r") as input_file:
     reader = csv.reader(input_file, delimiter=',')
     i=0
     for row in reader:
@@ -207,10 +207,10 @@ app.layout = html.Div([
 #def update_output(n_clicks):
 #    #if n_clicks>0:
 #    print(n_clicks)
-#    df = pd.read_csv('Book1.csv')
+#    df = pd.read_csv('WORK.csv')
 #
 #    data = [] #Buffer list
-#    with open("Book1.csv", "rb") as input_file:
+#    with open("WORK.csv", "rb") as input_file:
 #        reader = csv.reader(input_file, delimiter=',')
 #        i=0
 #        for row in reader:
@@ -237,10 +237,10 @@ app.layout = html.Div([
 #def update_output(n_clicks):
     #if n_clicks>0:
 #    print(n_clicks)
-#    df = pd.read_csv('Book1.csv')
+#    df = pd.read_csv('WORK.csv')
 #
 #    data = [] #Buffer list
-#    with open("Book1.csv", "rb") as input_file:
+#    with open("WORK.csv", "rb") as input_file:
 #        reader = csv.reader(input_file, delimiter=',')
 #        i=0
 #        for row in reader:
@@ -265,10 +265,10 @@ app.layout = html.Div([
     Output('table', 'data'),
     [Input('interval-component', 'n_intervals')])
 def update_row_indices(n_intervals):
-    df = pd.read_csv('Book1.csv')
+    df = pd.read_csv('WORK.csv')
 
     data = [] #Buffer list
-    with open("Book1.csv", "rb") as input_file:
+    with open("WORK.csv", "rb") as input_file:
         reader = csv.reader(input_file, delimiter=',')
         i=0
         for row in reader:
@@ -300,7 +300,7 @@ def update_row_indices(n_intervals):
     [Input('TimeFrame', 'value'),
     Input('interval-component', 'n_intervals')])
 def update_figure(value,n_intervals):
-    df = pd.read_csv('Book1.csv')
+    df = pd.read_csv('WORK.csv')
 
 
     data = [
@@ -325,10 +325,10 @@ def update_figure(value,n_intervals):
 #    Output('table', 'columns'),
 #    [Input('button', 'n_clicks')])
 #def update_output(n_clicks):
-#    df = pd.read_csv('Book1.csv')
+#    df = pd.read_csv('WORK.csv')
 #
 #    data = [] #Buffer list
-#    with open("Book1.csv", "rb") as input_file:
+#    with open("WORK.csv", "rb") as input_file:
 #        reader = csv.reader(input_file, delimiter=',')
 #        i=0
 #        for row in reader:
