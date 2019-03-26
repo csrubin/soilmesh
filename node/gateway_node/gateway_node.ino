@@ -8,8 +8,8 @@
 #include <EEPROM.h>
 
 // WiFi connection parameters
-const char* ssid = "201B"; //"P";
-const char* password = "wemoved10beds"; //"gerbillhamstar";
+const char* ssid = "Connor Rubin iPhone"; //"201B"; //"P";
+const char* password = "csr215259"; //"wemoved10beds"; //"gerbillhamstar";
 
 // Miscellaneous parameters
 const char* mqtt_server = "broker.hivemq.com"; //"broker.mqtt-dashboard.com";
@@ -23,6 +23,12 @@ int value = 0;
 String nodeID = String(EEPROM.read(0));
 char topic[] = "capstone_test";
 String dat, lati, longi, mon, d, yr, hr, m, s, alt, sats;
+
+// Moisture sensor vals
+const float DryValue = 3100;   //maximum value, completely dry
+const float WetValue = 1000;  //minimum value, completely wet
+float SoilMoistureValue = 0.0;
+float MoisturePercent = 0.0;
 
 // Object initialization
 WiFiClient espClient;
@@ -49,6 +55,12 @@ void setup() {
 
 void loop() {
   while (hs.available() > 0){
+
+    // Read soil sensor data
+    SoilMoistureValue = analogRead(A0);
+    MoisturePercent = SoilMoistureValue/DryValue;
+    String MP = String(MoisturePercent);
+    
     if (gps.encode(hs.read())){
       //displayInfo();
       
@@ -82,56 +94,13 @@ void loop() {
         sats = String(gps.satellites.value());
 
         dat = nodeID + ", " + yr + ", " + mon + ", " + d + ", " + hr + ", " 
-        + m + ", " + s + ", " + lati + ", " + longi + ", " + alt + ", " + sats; 
+        + m + ", " + s + ", " + MP + ", " + lati + ", " + longi + ", " + alt + ", " + sats; 
 
-        char DAT[60];
+        char DAT[70];
         dat.toCharArray(DAT,60);
         client.publish(topic, DAT);
         Serial.println(DAT);
         delay(500);
-
-        /*
-        char LATI[sizeof(lati)];
-        lati.toCharArray(LATI,sizeof(lati));
-
-        char LONGI[sizeof(longi)];
-        longi.toCharArray(LONGI,sizeof(longi));
-
-        char YR[sizeof(yr)];
-        yr.toCharArray(YR,sizeof(yr));
-
-        char MON[sizeof(mon)];
-        mon.toCharArray(MON,sizeof(mon));
-
-        char D[sizeof(d)];
-        d.toCharArray(D,sizeof(d));
-
-        char HR[sizeof(hr)];
-        hr.toCharArray(HR,sizeof(hr));
-
-        char M[sizeof(m)];
-        m.toCharArray(M,sizeof(m));
-
-        char S[sizeof(s)];
-        s.toCharArray(S,sizeof(s));
-        
-        char ALT[sizeof(alt)];
-        alt.toCharArray(ALT,sizeof(alt));
-
-        char SATS[sizeof(sats)];
-        sats.toCharArray(SATS,sizeof(sats));
-
-        client.publish("soilmesh/node1/latitude", LATI);
-        client.publish("soilmesh/node1/longitude", LONGI);
-        client.publish("soilmesh/node1/year", YR);
-        client.publish("soilmesh/node1/month", MON);
-        client.publish("soilmesh/node1/day", D);
-        client.publish("soilmesh/node1/hour", HR);
-        client.publish("soilmesh/node1/minute", M);
-        client.publish("soilmesh/node1/second", S);
-        client.publish("soilmesh/node1/altitude", ALT);
-        client.publish("soilmesh/node1/satellites", SATS);
-        */
       }
     }
   }
@@ -184,72 +153,6 @@ boolean reconnect() {
   return client.connected();
 }
 
-/*char getData(){
-  char dat[], lati[10], longi[10], mon[10], d[10], yr[10], hr[10], m[10], s[10], alt[10], sats[10];
-  if (hs.available()){  // Ensure hardware serial port is available 
-    if (gps.encode(hs.read())){   // Read data from GPS
-      
-  
-      if (gps.location.isValid()){
-        lati = char(gps.location.lat());
-        longi = char(gps.location.lng());
-      }
-      else{
-        lati = "INVALID";
-        longi = "INVALID";
-      }
-    
-      if (gps.date.isValid()){
-        yr = char(gps.date.year());
-        mon = char(gps.date.month());
-        d = char(gps.date.day());
-      }
-      else{
-        yr = "INVALID";
-        mon = "INVALID";
-        d = "INVALID";
-      }
-
-      if (gps.time.isValid()){
-        hr = char(gps.time.hour());
-        m = char(gps.time.minute());
-        s = char(gps.time.second());
-      }
-      else{
-        hr = "INVALID";
-        m = "INVALID";
-        s = "INVALID";
-      }
-    
-      if (gps.altitude.isValid()){
-        alt = char(gps.altitude.value());
-      }
-      else{
-        alt = "INVALID";
-      }
-    
-      if (gps.satellites.isValid()){
-        sats = char(gps.satellites.value());
-      }
-      else{
-        sats = "INVALID";
-      }
-    
-      // Add moisture reading 
-
-      // Create data string for one line of .csv
-      dat = nodeID + ", " + yr + ", " + mon + ", " + d + ", " + hr + ", " 
-        + m + ", " + s + ", " + lati + ", " + longi + ", " + alt + ", " + sats;
-    
-      return dat;
-    }
-  }
-  else{
-    dat = "GPS Serial unavailable";
-    return dat;
-  } 
-}
-*/
 
 void displayInfo(){
   // Location
