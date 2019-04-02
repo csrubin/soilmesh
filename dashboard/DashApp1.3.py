@@ -20,9 +20,9 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 #app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-df = pd.read_csv('Book1.csv')
+df = pd.read_csv('WORK2.csv')
 
-#with open('Book1.csv') as f:
+#with open('WORK2.csv') as f:
 #    last3 = list(f)[-3:]
 
 #print(last3)
@@ -34,7 +34,7 @@ df = pd.read_csv('Book1.csv')
 
 
 data = [] #Buffer list
-with open("Book1.csv", "r") as input_file:
+with open("WORK2.csv", "r") as input_file:
     reader = csv.reader(input_file, delimiter=',')
     i=0
     for row in reader:
@@ -223,10 +223,10 @@ app.layout = html.Div([
 #def update_output(n_clicks):
 #    #if n_clicks>0:
 #    print(n_clicks)
-#    df = pd.read_csv('Book1.csv')
+#    df = pd.read_csv('WORK2.csv')
 #
 #    data = [] #Buffer list
-#    with open("Book1.csv", "rb") as input_file:
+#    with open("WORK2.csv", "rb") as input_file:
 #        reader = csv.reader(input_file, delimiter=',')
 #        i=0
 #        for row in reader:
@@ -253,10 +253,10 @@ app.layout = html.Div([
 #def update_output(n_clicks):
     #if n_clicks>0:
 #    print(n_clicks)
-#    df = pd.read_csv('Book1.csv')
+#    df = pd.read_csv('WORK2.csv')
 #
 #    data = [] #Buffer list
-#    with open("Book1.csv", "rb") as input_file:
+#    with open("WORK2.csv", "rb") as input_file:
 #        reader = csv.reader(input_file, delimiter=',')
 #        i=0
 #        for row in reader:
@@ -281,10 +281,10 @@ app.layout = html.Div([
     Output('table', 'data'),
     [Input('interval-component', 'n_intervals')])
 def update_row_indices(n_intervals):
-    df = pd.read_csv('Book1.csv')
+    df = pd.read_csv('WORK2.csv')
 
     data = [] #Buffer list
-    with open("Book1.csv", "r") as input_file:
+    with open("WORK2.csv", "r") as input_file:
         reader = csv.reader(input_file, delimiter=',')
         i=0
         for row in reader:
@@ -331,14 +331,14 @@ def update_row_indices(n_intervals):
     [Input('TimeFrame', 'value'),
     Input('interval-component', 'n_intervals')])
 def update_figure(value,n_intervals):
-    df = pd.read_csv('Book1.csv')
+    df = pd.read_csv('WORK2.csv')
     #['DY','WK','MN','YR']
 
     if value == 'DY':
         data = [
             go.Scatter(
-                x=df[df['nodeID'] == i]['sec'][-10:],
-                y=df[df['nodeID'] == i]['moisture'][-10:],
+                x=df[df['nodeID'] == i]['sec'][-3:],
+                y=df[df['nodeID'] == i]['moisture'][-3:],
                 mode = 'lines+markers',
                 opacity=0.7,
                 marker={
@@ -351,8 +351,8 @@ def update_figure(value,n_intervals):
     else:
         data = [
             go.Scatter(
-                x=df[df['nodeID'] == i]['sec'][-60:],
-                y=df[df['nodeID'] == i]['moisture'][-60:],
+                x=df[df['nodeID'] == i]['sec'][-5:],
+                y=df[df['nodeID'] == i]['moisture'][-5:],
                 mode = 'lines+markers',
                 opacity=0.7,
                 marker={
@@ -371,10 +371,10 @@ def update_figure(value,n_intervals):
 #    Output('table', 'columns'),
 #    [Input('button', 'n_clicks')])
 #def update_output(n_clicks):
-#    df = pd.read_csv('Book1.csv')
+#    df = pd.read_csv('WORK2.csv')
 #
 #    data = [] #Buffer list
-#    with open("Book1.csv", "rb") as input_file:
+#    with open("WORK2.csv", "rb") as input_file:
 #        reader = csv.reader(input_file, delimiter=',')
 #        i=0
 #        for row in reader:

@@ -1,28 +1,42 @@
-// Combined mqtt_reconnect_nonblocking and mqtt_esp8266 examples
 // To be used only on node1
+// More description here
 
+// Libaries to be included
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <TinyGPS++.h>
 #include <HardwareSerial.h>
 #include <EEPROM.h>
+#include <SPI.h>
+#include <RH_RF95.h>
+
+// LoRa Radio constants
+#define RFM95_INT 33
+#define RFM95_CS 14
+#define RFM95_RST 32
+#define RF95_FREQ 915.0
 
 // WiFi connection parameters
-const char* ssid = "Connor Rubin iPhone"; //"201B"; //"P";
-const char* password = "csr215259"; //"wemoved10beds"; //"gerbillhamstar";
+const char* ssid = "Connor Rubin iPhone";
+const char* password = "csr215259"; 
 
-// Miscellaneous parameters
+// MQTT parameters
 const char* mqtt_server = "broker.hivemq.com"; //"broker.mqtt-dashboard.com";
+long lasMsg = 0;
+long lastReconnectAttempt = 0;
 
 // Global variables
 static const uint32_t GPSBaud = 9600;
-long lasMsg = 0;
-long lastReconnectAttempt = 0;
+String nodeID = String(EEPROM.read(0));
+char topic1[] = "node1";
+char topic2[] = "node2";
+char topic3[] = "node3";
+String dat, lati, longi, mon, d, yr, hr, m, s, alt, sats;
+String MP;
+
+// Unsure if needed
 char msg[50];
 int value = 0;
-String nodeID = String(EEPROM.read(0));
-char topic[] = "capstone_test";
-String dat, lati, longi, mon, d, yr, hr, m, s, alt, sats;
 
 // Moisture sensor vals
 const float DryValue = 3100;   //maximum value, completely dry
@@ -35,31 +49,55 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 TinyGPSPlus gps;
 HardwareSerial hs(0);
+RH_RF95 rf95(RFM95_CS, RFM95_INT); // Radio driver
 
 void setup() {
+  // Serial monitor begin
   Serial.begin(9600);
-  Serial.print(nodeID);
-  
+
+  // Initialize WiFi
   Serial.println("Initializing WiFi...");
   setup_wifi();
 
+  // Initialize MQTT
   Serial.println("Initializing MQTT protocol...");
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
 
+  // Initialize hardware serial2
   Serial.println("Initializing hardware serial port for GPS...");
   hs.begin(GPSBaud, SERIAL_8N1, 16, 17); 
 
+  // MQTT reconnect variable
   lastReconnectAttempt = 0;
+
+  // Initialize reset pin
+  pinMode(RFM95_RST, OUTPUT);
+  
+  // Manual reset
+  radioReset();
+
+  // Initialize LoRa
+  Serial.println("Initializing LoRa radio...");
+  while (!rf95.init()) {
+    Serial.println("LoRa radio init failed");
+    while (1);
+  }
+ 
+  // Ensure proper frequency for transmission
+  if (!rf95.setFrequency(RF95_FREQ)) {
+    Serial.println("setFrequency failed");
+    while (1);
+  }
+  Serial.print("Set Freq to: "); 
+  Serial.println(RF95_FREQ);
+  rf95.setTxPower(23, false);
+
+  Serial.println("All hardware initialized. Entering loop.");
 }
 
 void loop() {
   while (hs.available() > 0){
-
-    // Read soil sensor data
-    SoilMoistureValue = analogRead(A0);
-    MoisturePercent = SoilMoistureValue/DryValue;
-    String MP = String(MoisturePercent);
     
     if (gps.encode(hs.read())){
       //displayInfo();
@@ -78,29 +116,38 @@ void loop() {
         client.loop();
     
         // Publish message here
-        // Send data to mqtt broker
-        // Listen for topic w/ Python script and write data to .csv
+        // Send data to mqtt broker 
         
-        //publish
-        lati = String(gps.location.lat());
-        longi = String(gps.location.lng());
-        yr = String(gps.date.year());
-        mon = String(gps.date.month());
-        d = String(gps.date.day());
-        hr = String(gps.time.hour());
-        m = String(gps.time.minute());
-        s = String(gps.time.second());
-        alt = String(gps.altitude.meters());
-        sats = String(gps.satellites.value());
+        // Read soil sensor data
+        SoilMoistureValue = analogRead(A0);
+        MoisturePercent = SoilMoistureValue/DryValue;
+        MP = String(MoisturePercent);
 
-        dat = nodeID + ", " + yr + ", " + mon + ", " + d + ", " + hr + ", " 
-        + m + ", " + s + ", " + MP + ", " + lati + ", " + longi + ", " + alt + ", " + sats; 
-
+        // Read GPS data
+        dat = readGPS();
+        
+        // Convert to char array for PubSubClient functions
         char DAT[70];
         dat.toCharArray(DAT,60);
-        client.publish(topic, DAT);
+
+        // Publish node1 data to topic 
+        client.publish(topic1, DAT);
         Serial.println(DAT);
-        delay(500);
+        delay(10000);
+
+        /*
+        if (rf95.available()){
+          // Read data from node2
+          
+          // Publish data from node2
+          client.publish(topic2,XXX);
+          
+          // Read data from node3
+          
+          // Publish data from node3
+          client.publish(topic3,XXX);
+          
+        }*/
       }
     }
   }
@@ -153,74 +200,31 @@ boolean reconnect() {
   return client.connected();
 }
 
+String readGPS(){
+  lati = String(gps.location.lat());
+  longi = String(gps.location.lng());
+  yr = String(gps.date.year());
+  mon = String(gps.date.month());
+  d = String(gps.date.day());
+  hr = String(gps.time.hour());
+  m = String(gps.time.minute());
+  s = String(gps.time.second());
+  alt = String(gps.altitude.meters());
+  sats = String(gps.satellites.value());
 
-void displayInfo(){
-  // Location
-  Serial.print(F("Location: ")); 
-  if (gps.location.isValid()){
-    Serial.print(gps.location.lat(), 6);
-    Serial.print(F(","));
-    Serial.print(gps.location.lng(), 6);
-  } 
-  else{
-    Serial.print(F("INVALID"));
-  }
+  // Build string for single line in .csv
+  String line = nodeID + ", " + yr + ", " + mon + ", " + d + ", " + hr + ", " 
+  + m + ", " + s + ", " + MP + ", " + lati + ", " + longi + ", " + alt + ", " + sats; 
 
-  // Date/Time
-  Serial.print(F("  Date/Time: "));
-  if (gps.date.isValid()){
-    Serial.print(gps.date.month());
-    Serial.print(F("/"));
-    Serial.print(gps.date.day());
-    Serial.print(F("/"));
-    Serial.print(gps.date.year());
-  }
-  else{
-    Serial.print(F("INVALID"));
-  }
-
-  Serial.print(F(" "));
-  if (gps.time.isValid()){
-    if (gps.time.hour() < 10) Serial.print(F("0"));{
-      Serial.print(gps.time.hour());
-      Serial.print(F(":"));
-    }
-    if (gps.time.minute() < 10) Serial.print(F("0"));{
-      Serial.print(gps.time.minute());
-      Serial.print(F(":"));
-    }
-    if (gps.time.second() < 10) Serial.print(F("0"));{
-      Serial.print(gps.time.second());
-      Serial.print(F("."));
-    }
-    if (gps.time.centisecond() < 10) Serial.print(F("0"));{
-      Serial.print(gps.time.centisecond());
-    }
-  }
-  else{
-    Serial.print(F("INVALID"));
-  }
-  
-  // Altitude
-  Serial.print(F("  Altitude: "));
-  if (gps.altitude.isValid()){
-    Serial.print(gps.altitude.meters());
-    Serial.print(F("m"));
-  }
-  else{
-    Serial.print(F("INVALID"));
-  }
-
-  // Number of Satellites
-  Serial.print(F("  # Sats: "));
-  if (gps.satellites.isValid()){
-    Serial.print(gps.satellites.value());
-  }
-  else{
-    Serial.print(F("INVALID"));
-  }
-
-  // Newline + timing delay --> change for nonblocking? 
-  Serial.println();
-  delay(1000);
+  return line;
 }
+
+void radioReset(){
+  digitalWrite(RFM95_RST, HIGH);
+  delay(10);
+  digitalWrite(RFM95_RST, LOW);
+  delay(10);
+  digitalWrite(RFM95_RST, HIGH);
+  delay(10);
+}
+
