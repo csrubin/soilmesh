@@ -1,4 +1,4 @@
-ca#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Mar 18 11:07:11 2019
@@ -15,7 +15,7 @@ def on_message(client, userdata, message):
     print('Message retain flag: ', message.retain)
 
 
-topic = 'capstone_test'
+topic = 'node1'
 host = 'broker.hivemq.com'
 port = 1883
 

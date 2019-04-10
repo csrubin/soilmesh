@@ -186,7 +186,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   // Do something with received message
   // Listen for request to collect data from nodes w/ python dashboard 
-  // Trigger data collection at nodes 
+  // Trigger data collection at nodes '
+  
 
 }
 

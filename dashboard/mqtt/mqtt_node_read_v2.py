@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 import csv
 import time
 
-topic = 'node1'
+topic = 'node2'
 
 
 def on_message(client, userdata, message):
@@ -38,14 +38,18 @@ client.connect(host, port)
 client.loop_start()
 
 while True:   
-    client.subscribe('capstone_test')
+    print('Subscribing to topic.')
+    client.subscribe(topic)
+    print('Sleeping...')
     time.sleep(4)
-    cont = input('Continue? (y/n):' )
+    
+    
+    '''cont = input('Continue? (y/n):' )
     if cont.lower() == 'y':
         continue
     elif cont.lower() == 'n':
         break
     else:
-        print('Not an acceptable value')
+        print('Not an acceptable value')'''
 
 client.loop_stop()

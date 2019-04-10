@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Apr  2 12:15:16 2019
-
-@author: csrubin
-"""
 
 import paho.mqtt.client as mqtt
 import csv
 import time
 
-topics = ['node1', 'node2', 'node3']
+topic = 'node_receive'
+
 
 
 def on_message(client, userdata, message):
@@ -23,7 +19,8 @@ def on_message(client, userdata, message):
 
     with open(message.topic+'.csv', 'a') as f:
         writer = csv.writer(f)
-        writer.writerow(data)
+        writer.writerow(data)     
+
 
 
 host = 'broker.hivemq.com'
@@ -40,12 +37,19 @@ client.connect(host, port)
 client.loop_start()
 
 while True:
-    for topic in topics:
-        print('Subscribing to topic: %s' % topic)
-        client.subscribe(topic)
-        time.sleep(3)
-
-    time.sleep(3)
+    
+    state = input('off/on:' )
+    if state.lower() == 'off':
+        client.publish(topic,'OFF')
+        print('Turning light off...')
+    elif state.lower() == 'on':
+        client.publish(topic,'ON')
+        print('Turning light on...')
+    else:
+        print('Not an acceptable value')
+    
+    time.sleep(1)
+    
     cont = input('Continue? (y/n):')
 
     if cont.lower() == 'y':
@@ -54,5 +58,8 @@ while True:
         break
     else:
         print('Not an acceptable value')
+        
+    client.subscribe(topic)
+    time.sleep(3)
 
 client.loop_stop()
