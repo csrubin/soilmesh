@@ -8,8 +8,8 @@
 #include <EEPROM.h>
 
 // WiFi connection parameters
-const char* ssid = "201B"; //"P";
-const char* password = "wemoved10beds"; //"gerbillhamstar";
+const char* ssid = "Connor Rubin iPhone"; //"P";
+const char* password = "csr215259"; //"gerbillhamstar";
 
 // Miscellaneous parameters
 const char* mqtt_server = "broker.hivemq.com"; //"broker.mqtt-dashboard.com";
@@ -21,7 +21,7 @@ long lastReconnectAttempt = 0;
 char msg[50];
 int value = 0;
 String nodeID = String(EEPROM.read(0));
-char topic[] = "capstone_test";
+char topic[] = "soilmesh/node1";
 String dat, lati, longi, mon, d, yr, hr, m, s, alt, sats;
 
 // Object initialization
