@@ -105,7 +105,7 @@ with open("the_new_csv2.csv", "w+") as to_file:
     for new_row in data2:
         if new_row[7] != str(0):
            writer.writerow(new_row)
-           
+
 
 
 shaz13_custom_style = "mapbox://styles/shaz13/cjiog1iqa1vkd2soeu5eocy4i"
@@ -183,7 +183,7 @@ app.layout = html.Div([
                 figure={
                     'data': [
                         go.Scatter(
-                            x= range(0,9),  #df[df['nodeID'] == i]['sec'][-10:],
+                            x= tuple(range(0,9)),  #df[df['nodeID'] == i]['sec'][-10:],
                             y=df[df['nodeID'] == i]['moisture'][-10:],
                             mode = 'lines+markers',
                             opacity=0.7,
@@ -472,19 +472,19 @@ def update_row_indices(n_intervals):
         reader = csv.reader(input_file, delimiter=',')
         for row in list(csv.reader(input_file)):
             data2.append(row)
-    
+
     with open("NODE2.csv", "r") as input_file:
         reader = csv.reader(input_file, delimiter=',')
         for row in list(csv.reader(input_file)):
             data2.append(row)
-    
-    
+
+
     with open("NODE3.csv", "r") as input_file:
         reader = csv.reader(input_file, delimiter=',')
         for row in list(csv.reader(input_file)):
             data2.append(row)
-    
-    
+
+
     with open("the_new_csv2.csv", "w+") as to_file:
         writer = csv.writer(to_file, delimiter=',')
         for new_row in data2:
@@ -516,19 +516,19 @@ def update_figure(value,n_intervals):
         reader = csv.reader(input_file, delimiter=',')
         for row in list(csv.reader(input_file)):
             data2.append(row)
-    
+
     with open("NODE2.csv", "r") as input_file:
         reader = csv.reader(input_file, delimiter=',')
         for row in list(csv.reader(input_file)):
             data2.append(row)
-    
-    
+
+
     with open("NODE3.csv", "r") as input_file:
         reader = csv.reader(input_file, delimiter=',')
         for row in list(csv.reader(input_file)):
             data2.append(row)
-    
-    
+
+
     with open("the_new_csv2.csv", "w+") as to_file:
         writer = csv.writer(to_file, delimiter=',')
         for new_row in data2:
@@ -542,7 +542,7 @@ def update_figure(value,n_intervals):
         data = [
             go.Scatter(
 
-                x=np.linspace(0,24,60),#df[df['nodeID'] == i]['hour'][-24:],
+                x=tuple(np.linspace(0,24,60)),#df[df['nodeID'] == i]['hour'][-24:],
                 y=df[df['nodeID'] == i]['moisture'][-86400::1440],
                 mode = 'lines',
                 opacity=0.7,
@@ -579,7 +579,7 @@ def update_figure(value,n_intervals):
     elif value == 'MN':
         data = [
             go.Scatter(
-                x=range(0,59),#df[df['nodeID'] == i]['sec'][-60:],
+                x=tuple(range(0,59)),#df[df['nodeID'] == i]['sec'][-60:],
                 y=df[df['nodeID'] == i]['moisture'][-60:],
                 mode = 'lines+markers',
                 opacity=0.7,
@@ -597,7 +597,7 @@ def update_figure(value,n_intervals):
     elif value == 'HR':
         data = [
             go.Scatter(
-                x=np.linspace(0,60,60),#df[df['nodeID'] == i]['min'][-60:],
+                x=tuple(np.linspace(0,60,60)),#df[df['nodeID'] == i]['min'][-60:],
                 y=df[df['nodeID'] == i]['moisture'][-3600::60],
                 mode = 'lines+markers',
                 opacity=0.7,
@@ -615,7 +615,7 @@ def update_figure(value,n_intervals):
     else:
         data = [
             go.Scatter(
-                x= range(0,9),  #df[df['nodeID'] == i]['sec'][-10:],
+                x= tuple(range(0,9)),  #df[df['nodeID'] == i]['sec'][-10:],
                 y=df[df['nodeID'] == i]['moisture'][-10:],
                 mode = 'lines+markers',
                 opacity=0.7,

@@ -71,7 +71,6 @@ void setup() {
   Serial.println("Initializing MQTT protocol...");
   client.setServer(mqtt_server, mqttPort);
   client.setCallback(callback);
-
   // Initialize hardware serial2
   Serial.println("Initializing hardware serial port for GPS...");
   hs.begin(GPSBaud, SERIAL_8N1, 16, 17); 
