@@ -9,12 +9,12 @@ void setup()
 void loop() 
 {
   int val; 
-  val = analogRead(A0); //connect sensor to Analog 0
+  val = analogRead(A1); //connect sensor to Analog 0
   Serial.println(val); //print the value to serial port
   delay(2000);
 }
-//max(1) = 2910
-//min(1) = 1300
+//max(1) = 2900 
+//min(1) = 1300 
 
 //max(2) = 2647
 //min(2) = 1200

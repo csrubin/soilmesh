@@ -1,4 +1,4 @@
-Day,Component,Moisture (V/V),,moisture,lat,long,alt,sats,yr,m,d,hr,min,s
-4,Node 3,0.6,,,,,,,,,,,,
-4,Node 2,0.5,,,,,,,,,,,,
-4,Node 1,0.4,,,,,,,,,,,,
+nodeID,year,month,day,hour,min,sec,moisture,latitude,longitude,altitude,satellites
+1, 2019, 4, 18, 16, 19, 27, -0.75, 0.00, 0.00, 0.00, 0
+2, 2019, 4, 18, 16, 15, 58, 247, 0.00, 0.00, 0.00, 0
+3, 2019, 4, 18, 16, 15, 58, 247, 0.00, 0.00, 0.00, 0

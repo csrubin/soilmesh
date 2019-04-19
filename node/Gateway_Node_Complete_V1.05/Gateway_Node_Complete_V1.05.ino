@@ -21,7 +21,11 @@ const char* ssid = "Connor Rubin iPhone";
 const char* password = "csr215259"; 
 
 // MQTT parameters
-const char* mqtt_server = "broker.hivemq.com"; //"broker.mqtt-dashboard.com";
+const char* mqtt_server = "m16.cloudmqtt.com"; //"broker.hivemq.com"; //"broker.mqtt-dashboard.com"; const char* mqttServer = "m11.cloudmqtt.com";
+const int mqttPort = 10628;
+const char* mqttUser = "imwienrb";
+const char* mqttPassword = "HltL0CNq12sz";
+
 long lasMsg = 0;
 long lastReconnectAttempt = 0;
 
@@ -42,8 +46,8 @@ char msg[50];
 int value = 0;
 
 // Moisture sensor vals
-const float DryValue = 3100;   //maximum value, completely dry
-const float WetValue = 1000;  //minimum value, completely wet
+const float DryValue = 2900;   //maximum value, completely dry
+const float WetValue = 1300;  //minimum value, completely wet
 float SoilMoistureValue = 0.0;
 float MoisturePercent = 0.0;
 
@@ -56,7 +60,7 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT); // Radio driver
 
 void setup() {
   // Serial monitor begin
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // Initialize WiFi
   Serial.println("Initializing WiFi...");
@@ -64,7 +68,7 @@ void setup() {
 
   // Initialize MQTT
   Serial.println("Initializing MQTT protocol...");
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_server, mqttPort);
   client.setCallback(callback);
 
   // Initialize hardware serial2
@@ -101,11 +105,21 @@ void setup() {
 
 void loop() {
   while (hs.available() > 0){
-    
+    // Read soil sensor data
+    SoilMoistureValue = analogRead(A0);
+    Serial.print("Analog Val: ");
+    Serial.println(SoilMoistureValue);
+    MoisturePercent = 1-((SoilMoistureValue-WetValue)/(DryValue-WetValue));
+    MP = String(MoisturePercent);
+
     if (gps.encode(hs.read())){
       //displayInfo();
-      
+
       if (!client.connected()) {
+        Serial.println("Connecting...");
+        if (client.connect("soilmeshmqtt", mqttUser, mqttPassword)){
+          Serial.print("Connected.");
+        }
         long now = millis();
         if (now - lastReconnectAttempt > 5000) {
           lastReconnectAttempt = now;
@@ -116,15 +130,11 @@ void loop() {
         }
       } else {
         // Client connected
+        Serial.println("Client connected");
         client.loop();
         ID = 1;
         // Publish message here
         // Send data to mqtt broker 
-        
-        // Read soil sensor data
-        SoilMoistureValue = analogRead(A0);
-        MoisturePercent = SoilMoistureValue/DryValue;
-        MP = String(MoisturePercent);
 
         // Read GPS data
         dat = readGPS();
@@ -136,6 +146,7 @@ void loop() {
 
         // Publish node1 data to topic
         if(GPSFlag == 1){ 
+        Serial.println("Publishing to topic");
         client.publish(topic1, DAT);
         GPSFlag = 2;
         }

@@ -187,7 +187,7 @@ app.layout = html.Div([
                 figure={
                     'data': [
                         go.Scatter(
-                            x= range(0,9),  #df[df['nodeID'] == i]['sec'][-10:],
+                            x = tuple(range(0,9)),  #df[df['nodeID'] == i]['sec'][-10:],
                             y=df[df['nodeID'] == i]['moisture'][-10:],
                             mode = 'lines+markers',
                             opacity=0.7,
