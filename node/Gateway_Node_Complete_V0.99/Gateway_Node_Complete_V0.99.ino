@@ -123,6 +123,7 @@ void loop() {
         
         // Read soil sensor data
         SoilMoistureValue = analogRead(A0);
+        Serial.println(SoilMoistureValue);
         MoisturePercent = SoilMoistureValue/DryValue;
         MP = String(MoisturePercent);
 

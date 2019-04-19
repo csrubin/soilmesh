@@ -48,7 +48,8 @@ int value = 0;
 // Moisture sensor vals
 const float DryValue = 2900;   //maximum value, completely dry
 const float WetValue = 1300;  //minimum value, completely wet
-float SoilMoistureValue = 0.0;
+int sensor = A2;
+int SoilMoistureValue = 0;
 float MoisturePercent = 0.0;
 
 // Object initialization
@@ -105,12 +106,6 @@ void setup() {
 
 void loop() {
   while (hs.available() > 0){
-    // Read soil sensor data
-    SoilMoistureValue = analogRead(A0);
-    Serial.print("Analog Val: ");
-    Serial.println(SoilMoistureValue);
-    MoisturePercent = 1-((SoilMoistureValue-WetValue)/(DryValue-WetValue));
-    MP = String(MoisturePercent);
 
     if (gps.encode(hs.read())){
       //displayInfo();
@@ -135,6 +130,11 @@ void loop() {
         ID = 1;
         // Publish message here
         // Send data to mqtt broker 
+        
+        // Read soil sensor data
+        SoilMoistureValue = analogRead(sensor);
+        MoisturePercent = 1-((SoilMoistureValue-WetValue)/(DryValue-WetValue));
+        MP = String(MoisturePercent);
 
         // Read GPS data
         dat = readGPS();
